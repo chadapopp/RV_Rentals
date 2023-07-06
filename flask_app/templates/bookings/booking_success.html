@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container text-light text-center col-6 mb-5">
+        <h2>Hope You Enjoy Your Stay at {{ listing.title }}!</h2>
+        <h4 class="mb-5">Hosted By: {{ host.first_name }} {{ host.last_name }}</h4>
+        <h4>Below are the details for all your upcoming trips:</h4>
+    </div>
+    {% if most_recent_booking %}
+    <div class="container card card-body col-md-4">
+        <p class="fw-bold fs-4">You Booked: {{ most_recent_booking.listing.title }}</p>
+        <p class="fw-bold fs-5">Check-in: {{ most_recent_booking.check_in.strftime('%m-%d-%Y') }}</p>
+        <p class="fw-bold fs-5">Check-out: {{ most_recent_booking.check_out.strftime('%m-%d-%Y') }}</p>
+        <p class="fw-bold fs-5">Number of Guests: {{ most_recent_booking.number_of_guests }}</p>
+        <p class="fw-bold fs-5">Booked By: {{ most_recent_booking.user.first_name }} {{ most_recent_booking.user.last_name }}</p>
+        <p>Contact information: {{ host.email }}</p>
+        <a href="/view_listing/{{listing.id}}" class="btn btn-primary">View Details</a>
+    </div>
+    {% else %}
+        <p>No bookings found.</p>
+    {% endif %}
+    <div class="container col-5 mt-5">
+        <a href="/logout" class="btn btn-warning">Logout</a>
+        <a href="/booking/my_booking" class="btn btn-primary">My Home Page</a>
+    </div>
+{% endblock %}

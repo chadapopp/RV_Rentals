@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<div><a href="{{ url_for('show_booking_page', listing_id=listing.id) }}" class="btn btn-success mb-5">Book It</a></div>
+<div class="calendar text-light mb-5" id="calendar"></div>
+
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+<script>
+    var availableDates = {{ dates | tojson }};
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: availableDates,
+            eventContent: function(arg) {
+                if (arg.event.backgroundColor === 'green') {
+                    return { html: '<b>Available</b>' };
+                } else if (arg.event.backgroundColor === 'red') {
+                    return { html: '<b>Booked</b>' };
+                }
+            },
+            eventBackgroundColor: 'transparent',
+            eventBorderColor: 'transparent'
+        });
+        calendar.render();
+    });
+</script>
+
+
+  
+
+{% endblock %}
+{% endblock %}

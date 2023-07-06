@@ -1,0 +1,136 @@
+{% extends 'base.html' %} 
+
+{% block content %}
+<div class="container mt-5 text-light">
+    <div>
+        <h1>Booking: {{ listing.title }}</h1>
+        <h3>Please Select a Date</h3>
+    </div>
+
+    <form method="post" action="/booking/create">
+        <div class="mb-3">
+            <label>Check In:</label>
+            <input type="text" name="check_in" class="form-control hide-calendar" id="check_in_date" readonly required>
+            <input type="hidden" name="user_id" value="{{ listing.user_id }}">
+            <input type="hidden" name="listing_id" value="{{ listing.id }}">
+        </div>
+        <div class="mb-3">
+            <label>Check Out:</label>
+            <input type="text" name="check_out" class="form-control hide-calendar" id="check_out_date" readonly required>
+        </div>
+        <div class="mb-3">
+            <label>Number Of Guests:</label>
+            <input type="number" name="number_of_guests" class="form-control">
+        </div>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Book It!</button>
+        </div>
+    </form>
+</div>
+<div> <h2 class="text-light">Available Dates for {{listing.title}}</h2>
+</div>
+<div class="calendar text-light mb-5" id="calendar"></div>
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<script>
+
+    var availableDates = JSON.parse('{{ dates | tojson }}');
+    var isCalendarShown = false; // Keep track of calendar visibility
+  
+    document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: availableDates,
+        selectable: true, // Enable date selection
+        select: function(info) {
+          var startDate = info.startStr; // Get the start date string
+          var endDate = info.endStr; // Get the end date string
+  
+          var checkInInput = document.getElementById('check_in_date');
+          var checkOutInput = document.getElementById('check_out_date');
+  
+          if (!checkInInput.value) {
+            // If check-in date is not selected, set the selected date as check-in
+            checkInInput.value = startDate;
+            checkOutInput.value = '';
+          } else if (!checkOutInput.value) {
+            // If check-out date is not selected, set the selected date as check-out
+            var checkInDate = new Date(checkInInput.value);
+            var selectedEndDate = new Date(endDate);
+  
+            if (selectedEndDate < checkInDate) {
+              // Display an error message or handle the case when the check-out date is before the check-in date
+              alert('Invalid date range. Check-out date cannot be before the check-in date.');
+              return;
+            }
+  
+            checkOutInput.value = endDate;
+          } else {
+            // If both check-in and check-out dates are already selected, reset the inputs
+            checkInInput.value = startDate;
+            checkOutInput.value = '';
+          }
+        },
+        eventContent: function(arg) {
+          if (arg.event.backgroundColor === 'green') {
+            return { html: '<b>Available</b>' };
+          } else if (arg.event.backgroundColor === 'red') {
+            return { html: '<b>Booked</b>' };
+          }
+        },
+        eventBackgroundColor: 'transparent',
+        eventBorderColor: 'transparent'
+      });
+  
+      // Show/hide the calendar based on input field focus
+      document.getElementById('check_in_date').addEventListener('focus', function() {
+        showCalendar();
+      });
+  
+      document.getElementById('check_out_date').addEventListener('focus', function() {
+        showCalendar();
+      });
+  
+      function showCalendar() {
+        if (!isCalendarShown) {
+          calendar.render();
+          isCalendarShown = true;
+        }
+      }
+    });
+  
+    // Function to prevent manual input in check-in and check-out date fields
+    function preventInput() {
+      document.getElementById('check_in_date').addEventListener('keydown', function(e) {
+        e.preventDefault();
+      });
+      document.getElementById('check_out_date').addEventListener('keydown', function(e) {
+        e.preventDefault();
+      });
+    }
+  
+    // Call the preventInput function on page load
+    preventInput();
+  </script>
+
+  <style>
+    .hide-calendar::-webkit-calendar-picker-indicator,
+    .hide-calendar::-webkit-inner-spin-button,
+    .hide-calendar::-webkit-clear-button {
+    display: none;
+    }
+  </style>
+  
+  
+  
+  
+  
+{% endblock %}
+{% endblock %}
+
+
+

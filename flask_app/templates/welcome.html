@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<video id="background-video" src="/static/imgs/pexels-ambientnature-atmosphere-3624322-1920x1080-30fps.mp4" autoplay muted loop ></video>
+
+<div class="header">
+  <h1>Welcome To US RV Rentals</h1>
+  <h5>Search by State or View All Available Rentals</h5>
+</div>
+
+<div class="index-container">
+  <div class="state-search">
+    <div class="content">
+      <h2 class="title">Search By State</h2>
+      <form action="/search_state" method="GET">
+        <select name="search" class="form-control">
+          <option value="">Select a State</option>
+          {% for state in states %}
+            <option>{{state}}</option>
+          {% endfor %}
+        </select>
+        <input type="submit" class="btn btn-primary mt-3" value="Search">
+      </form>
+      <a href="/all_rentals" class="view-all-rentals btn btn-primary mt-5">View All Rentals</a>
+    </div>
+  </div>
+
+  
+  
+  <div class="login">
+      <h2>Login</h2>
+      <form action="/login" method="post">
+          <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" name="email" aria-describedby="emailHelp">
+          </div>
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Password</label>
+            <input type="password" class="form-control" name="password" id="exampleInputPassword1">
+          </div>
+          <button type="submit" class="btn btn-primary mb-3">Login</button>
+        </form>
+        <h6 style="color: white;">Not a Member?</h6>
+        <p style="color:white;">Sign Up <a style="color:white;" href="/sign_up">Here</a></p>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+{% with errors = get_flashed_messages() %}
+    {% if errors %}
+        {% for error_message in errors %}
+        <div class="alert alert-danger">{{error_message}}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+<h1 class="text-light"> Below Are Your Renters</h1>
+
+<table class="table table-striped text-light">
+    <thead>
+        <tr>
+            <th>Unit Rented</th>
+            <th>Check-in Date</th>
+            <th>Check-out Date</th>
+            <th>Booked By</th>
+            <th>Number Of Guests</th>
+            <th>Remove Booking</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% if bookings is none or bookings|length == 0 %}
+        <div class="container text-light">
+            <h2>Nobody has booked your rentals.</h2>
+        </div>
+        {% else %}
+        {% for booking in bookings %}
+        <tr>
+            <td class="text-light">{{ booking.listing.title }}</td>
+            <td class="text-light">{{ booking.check_in.strftime('%Y-%m-%d') }}</td>
+            <td class="text-light">{{ booking.check_out.strftime('%Y-%m-%d') }}</td>
+            <td class="text-light">{{ booking.user.first_name }} {{booking.user.last_name}}</td>
+            <td class="text-light">{{ booking.number_of_guests }}</td>
+            <td><a href="/booking/delete_expired_booking/{{booking.id}}" class="btn btn-danger">Remove Booking</a></td>
+
+        </tr>
+        {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
+<div class="container">
+    <a href="/create_listing" class="btn btn-success">List Another RV for Rent</a>
+    <a href="/booking/my_booking" class="btn btn-primary">Back to My Bookings</a>    
+    <a href="/logout" class="btn btn-warning">Logout</a>
+</div>
+
+{% endblock %}
